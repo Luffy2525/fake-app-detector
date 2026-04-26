@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShieldScan — Fake App & Dark Pattern Detector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <span class="logo-icon">🛡</span>
+      <span class="logo-text">ShieldScan</span>
+      <span class="logo-badge">v1.0</span>
+    </div>
+    <div class="nav-links">
+      <a href="#analyze">Analyze</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#about">About</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hex-grid"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">AI-Powered Android Security</div>
+    <h1 class="hero-title">
+      Detect Fake Apps &<br>
+      <span class="accent">Dark Patterns</span><br>
+      Before They Harm You
+    </h1>
+    <p class="hero-sub">Upload any APK or paste a Play Store URL. Our 4-module analysis engine scans permissions, dark UI patterns, and fake app signatures in seconds.</p>
+    <div class="hero-stats" id="hero-stats">
+      <div class="stat"><span class="stat-n" id="s-total">1,248</span><span class="stat-l">Apps Analyzed</span></div>
+      <div class="stat"><span class="stat-n" id="s-fake">424</span><span class="stat-l">Fake Detected</span></div>
+      <div class="stat"><span class="stat-n" id="s-dark">649</span><span class="stat-l">Dark Patterns</span></div>
+      <div class="stat"><span class="stat-n" id="s-safe">387</span><span class="stat-l">Cleared Safe</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYZE SECTION -->
+<section class="analyze-section" id="analyze">
+  <div class="container">
+    <div class="section-tag">Start Analysis</div>
+    <h2 class="section-title">Upload APK or Enter App Details</h2>
+
+    <!-- TABS -->
+    <div class="tab-bar">
+      <button class="tab active" data-tab="apk">📦 Upload APK File</button>
+      <button class="tab" data-tab="url">🔗 App Name / URL</button>
+    </div>
+
+    <!-- APK TAB -->
+    <div class="tab-content active" id="tab-apk">
+      <form id="apk-form">
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-icon">📱</div>
+          <div class="drop-text">
+            <strong>Drop APK file here</strong>
+            <span>or click to browse — max 100MB</span>
+          </div>
+          <input type="file" id="apk-file" accept=".apk,.zip" hidden>
+          <div class="file-info" id="file-info"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>App Name</label>
+            <input type="text" id="app-name" placeholder="e.g. WhatsApp Plus" class="inp">
+          </div>
+          <div class="form-group">
+            <label>Developer / Publisher</label>
+            <input type="text" id="developer" placeholder="e.g. Meta Platforms Inc." class="inp">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>App Description (optional — improves dark pattern detection)</label>
+          <textarea id="description" placeholder="Paste app store description here..." class="inp textarea" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn-primary" id="scan-btn">
+          <span class="btn-icon">🔍</span> Scan APK
+        </button>
+      </form>
+    </div>
+
+    <!-- URL TAB -->
+    <div class="tab-content" id="tab-url">
+      <form id="url-form">
+        <div class="form-group">
+          <label>App Name</label>
+          <input type="text" id="url-app-name" placeholder="e.g. TikTok Lite Pro" class="inp" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Developer / Publisher</label>
+            <input type="text" id="url-developer" placeholder="e.g. ByteDance Ltd." class="inp">
+          </div>
+          <div class="form-group">
+            <label>Play Store / APK URL (optional)</label>
+            <input type="url" id="app-url" placeholder="https://play.google.com/store/apps/details?id=..." class="inp">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>App Description / Store Listing Text</label>
+          <textarea id="url-description" placeholder="Paste Play Store description, subscription terms, or any app text here..." class="inp textarea" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn-primary" id="url-scan-btn">
+          <span class="btn-icon">🔍</span> Analyze App
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<section class="loading-section" id="loading" style="display:none">
+  <div class="container">
+    <div class="loader-box">
+      <div class="scanner-anim">
+        <div class="scan-ring ring1"></div>
+        <div class="scan-ring ring2"></div>
+        <div class="scan-ring ring3"></div>
+        <div class="scan-icon">🛡</div>
+      </div>
+      <h3 class="loading-title">Scanning in progress...</h3>
+      <div class="module-steps">
+        <div class="step" id="step1">📦 Module 1: APK Preprocessing</div>
+        <div class="step" id="step2">🔐 Module 2: Permission Analysis</div>
+        <div class="step" id="step3">🎭 Module 3: Dark Pattern Detection</div>
+        <div class="step" id="step4">🕵️ Module 4: Fake App Detection</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="results-section" id="results" style="display:none">
+  <div class="container">
+    <div class="results-header">
+      <div class="results-meta" id="results-meta"></div>
+      <button class="btn-secondary" onclick="resetAnalysis()">↩ New Scan</button>
+    </div>
+
+    <!-- VERDICT CARD -->
+    <div class="verdict-card" id="verdict-card">
+      <div class="verdict-badge" id="verdict-badge"></div>
+      <div class="verdict-scores" id="verdict-scores"></div>
+      <p class="verdict-recommendation" id="verdict-recommendation"></p>
+    </div>
+
+    <!-- MODULE RESULTS GRID -->
+    <div class="modules-grid">
+      <!-- Module 1 -->
+      <div class="module-card" id="m1-card">
+        <div class="module-header">
+          <span class="module-num">01</span>
+          <div>
+            <h3>APK Preprocessing</h3>
+            <span class="module-status" id="m1-status">Analyzing...</span>
+          </div>
+        </div>
+        <div class="module-body" id="m1-body"></div>
+      </div>
+
+      <!-- Module 2 -->
+      <div class="module-card" id="m2-card">
+        <div class="module-header">
+          <span class="module-num">02</span>
+          <div>
+            <h3>Permission Analysis</h3>
+            <span class="module-status" id="m2-status">Analyzing...</span>
+          </div>
+        </div>
+        <div class="module-body" id="m2-body"></div>
+      </div>
+
+      <!-- Module 3 -->
+      <div class="module-card full-width" id="m3-card">
+        <div class="module-header">
+          <span class="module-num">03</span>
+          <div>
+            <h3>Dark Pattern Detection</h3>
+            <span class="module-status" id="m3-status">Analyzing...</span>
+          </div>
+        </div>
+        <div class="module-body" id="m3-body"></div>
+      </div>
+
+      <!-- Module 4 -->
+      <div class="module-card full-width" id="m4-card">
+        <div class="module-header">
+          <span class="module-num">04</span>
+          <div>
+            <h3>Fake App Detection</h3>
+            <span class="module-status" id="m4-status">Analyzing...</span>
+          </div>
+        </div>
+        <div class="module-body" id="m4-body"></div>
+      </div>
+    </div>
+
+    <!-- FULL PERMISSIONS TABLE -->
+    <div class="perm-table-section">
+      <h3>📋 Full Permission Breakdown</h3>
+      <div id="perm-table"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how-it-works">
+  <div class="container">
+    <div class="section-tag">Architecture</div>
+    <h2 class="section-title">How ShieldScan Works</h2>
+    <div class="modules-flow">
+      <div class="flow-card">
+        <div class="flow-num">01</div>
+        <div class="flow-icon">📦</div>
+        <h4>APK Preprocessing</h4>
+        <p>Extracts APK structure, validates ZIP format, computes MD5/SHA256 hashes, reads AndroidManifest.xml, and checks for native code libraries.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card">
+        <div class="flow-num">02</div>
+        <div class="flow-icon">🔐</div>
+        <h4>Permission Analysis</h4>
+        <p>Maps all 30+ permissions against a curated risk database. Categorizes into HIGH/MEDIUM/LOW risk and computes a permission risk score (0–100).</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card">
+        <div class="flow-num">03</div>
+        <div class="flow-icon">🎭</div>
+        <h4>Dark Pattern Detection</h4>
+        <p>Scans app name, description, and metadata for 10 dark pattern categories: hidden costs, trick questions, confirm-shaming, urgency traps, and more.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card">
+        <div class="flow-num">04</div>
+        <div class="flow-icon">🕵️</div>
+        <h4>Fake App Detection</h4>
+        <p>Checks file hash against malware databases, identifies cloned app names, suspicious developers, malicious APK distribution domains, and overlay attack patterns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="section-tag">About</div>
+        <h2 class="section-title">Built for Real-World Security</h2>
+        <p>ShieldScan is a mini-project demonstrating a full-stack Android app security analysis system. It combines static APK analysis, NLP-based dark pattern detection, and signature-based fake app identification.</p>
+        <p style="margin-top:1rem;">Built with Python Flask backend and a pure HTML/CSS/JS frontend — deployable on any cloud platform including Render, Railway, Heroku, or your own server.</p>
+        <div class="tech-tags">
+          <span>Python 3.10+</span><span>Flask</span><span>zipfile</span>
+          <span>hashlib</span><span>Regex NLP</span><span>REST API</span>
+          <span>Render Deploy</span><span>HTML5/CSS3</span>
+        </div>
+      </div>
+      <div class="about-modules">
+        <div class="about-module-item">
+          <div class="ami-icon">📦</div>
+          <div><strong>Module 1</strong><p>App Input & APK Preprocessing</p></div>
+        </div>
+        <div class="about-module-item">
+          <div class="ami-icon">🔐</div>
+          <div><strong>Module 2</strong><p>Permission Analysis Module</p></div>
+        </div>
+        <div class="about-module-item">
+          <div class="ami-icon">🎭</div>
+          <div><strong>Module 3</strong><p>Dark Pattern Detection Module</p></div>
+        </div>
+        <div class="about-module-item">
+          <div class="ami-icon">🕵️</div>
+          <div><strong>Module 4</strong><p>Fake App Detection Module</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span>🛡 ShieldScan — Fake App & Dark Pattern Detection System</span>
+    <span>Mini Project · Built with Python Flask + Vanilla JS</span>
+  </div>
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>

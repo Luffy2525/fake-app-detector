@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+uploads/
+reports/
+*.apk
+*.zip
+venv/
+env/
+.venv/
+.DS_Store
+*.egg-info/
+dist/
+build/
